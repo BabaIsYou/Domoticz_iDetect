@@ -18,6 +18,9 @@ class ssh_tracker(tracker):
 		self.sshbin = 'ssh'
 		self.connected = False
 		self.my_transport = None
+		if tracker_port is False:
+			self.tracker_port = 22
+
 		Domoticz.Debug(self.tracker_ip + ' Tracker is of the ssh kind')
 		if NOPARAMIKO:
 			Domoticz.Error('Missing paramiko module required for ssh. Install it using: sudo pip3 install paramiko')
@@ -45,7 +48,7 @@ class ssh_tracker(tracker):
 		if NOPARAMIKO:
 			Domoticz.Error('Missing paramiko module requred for ssh. Install it using: sudo pip3 install paramiko')
 			return
-		Domoticz.Debug(self.tracker_ip + ' ====> SSH start connect')
+		Domoticz.Debug(self.tracker_ip + ' ====> SSH start connect on port ' + str(self.tracker_port))
 		if self.tracker_password == '':
 			if self.tracker_keyfile != '':
 				my_key_file = self.tracker_keyfile

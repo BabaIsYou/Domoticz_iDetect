@@ -23,6 +23,8 @@ class tracker():
 		self.poll_thread = None
 		self.poll_timer = threading.Timer(self.poll_interval, self.timer_clockwork)
 		self.poll_timer.start()
+#		Domoticz.Status('Tracker activated:' + tracker_ip + ', user: ' + tracker_user + ', type: ' + str(self.__class__.__qualname__) + ' and poll interval: ' + str(poll_interval))
+		Domoticz.Status('Starting tracker:{}, user:{}, class:{} and poll interval:{}'.format(tracker_ip,tracker_user,self.__class__.__qualname__,poll_interval))
 			
 	def heartbeat_handler(self):
 		# don't need heartbeat when using threading timers
@@ -36,6 +38,7 @@ class tracker():
 		Domoticz.Debug(self.tracker_ip + ' Class has no polling method defined')
 	
 	def receiver_callback(self, raw_data):
+		Domoticz.Debug(self.tracker_ip + ' Sent RAW:' + str(raw_data))
 		self.found_tag_ids = data_helper.clean_tag_id_list(raw_data, self.tag_type)
 		if not self.interpreter_callback is None:
 			self.interpreter_callback(self)
@@ -53,10 +56,12 @@ class tracker():
 		
 	def stop_now(self):
 		self.is_ready = False
+		Domoticz.Debug("{} main tracker stopping".format(self.tracker_ip))
 		if not self.poll_timer is None:
 			self.poll_timer.cancel()
 			self.poll_timer.join()
-			Domoticz.Debug(self.tracker_ip + ' Poll timer canceled')
+			Domoticz.Debug("{} Poll timer canceled and job finished".format(self.tracker_ip))
+		Domoticz.Debug("{} main tracker stopped".format(self.tracker_ip))
 	
 	def register_list_interpreter(self, callback):
 		self.interpreter_callback=callback
